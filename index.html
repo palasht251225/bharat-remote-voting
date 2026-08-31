@@ -1,0 +1,868 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rashtriya Matdaan Network | Bharat Remote AI & Blockchain Voting System</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Inter"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          colors: {
+            saffron: {
+              50: '#fff7ed',
+              100: '#ffedd5',
+              200: '#fed7aa',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c'
+            },
+            indiaGreen: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d'
+            },
+            ashokaNavy: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+              950: '#0f172a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons & Chart.js -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col selection:bg-orange-500 selection:text-white font-sans antialiased">
+
+  <!-- Authentic Indian National Tricolor Ribbon -->
+  <div class="tiranga-top-bar"></div>
+
+  <!-- Main Navigation Bar -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-3 flex items-center justify-between">
+      
+      <!-- Brand & Project Title -->
+      <div class="flex items-center gap-3.5">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-saffron-500 via-ashokaNavy-800 to-indiaGreen-600 p-0.5 shadow-md shadow-slate-200 flex items-center justify-center">
+          <div class="w-full h-full bg-white rounded-[14px] flex items-center justify-center">
+            <i data-lucide="vote" class="w-6 h-6 text-saffron-600"></i>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-base sm:text-lg tracking-tight text-slate-900">
+              BHARAT REMOTE VOTING
+            </span>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 font-mono font-bold border border-orange-200">
+              RMN v2.4
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-500 font-medium">राष्ट्रीय मतदान नेटवर्क • Location-Agnostic AI & Blockchain Remote Election Infrastructure</p>
+        </div>
+      </div>
+
+      <!-- Top Tools & Status Badges -->
+      <div class="flex items-center gap-3">
+        <!-- Live Ledger Height -->
+        <div class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-100/90 rounded-full border border-slate-200 text-xs font-mono">
+          <span class="w-2 h-2 rounded-full bg-indiaGreen-500 animate-pulse"></span>
+          <span class="text-slate-500">Ledger Height:</span>
+          <span id="headerBlockHeightTicker" class="text-ashokaNavy-900 font-bold">Block #1</span>
+        </div>
+
+        <!-- Audio Toggle -->
+        <button id="soundToggleBtn" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-semibold border border-slate-200 text-slate-700 flex items-center gap-1.5 transition">
+          <i data-lucide="volume-2" class="w-4 h-4 text-indiaGreen-600 inline"></i>
+          <span class="hidden sm:inline">Sound ON</span>
+        </button>
+
+        <!-- Constitutional Seal -->
+        <div class="hidden lg:flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-50 border border-blue-200 rounded-xl text-blue-800 text-xs font-semibold">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-blue-600"></i>
+          <span>ECI Framework • Art. 326</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-2.5 border-t border-slate-100 no-scrollbar">
+      <button data-tab="vote" class="nav-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-saffron-500 bg-saffron-50 text-saffron-700 flex items-center gap-2 whitespace-nowrap transition shadow-sm">
+        <i data-lucide="check-square" class="w-4 h-4"></i>
+        <span>Cast Remote Vote</span>
+      </button>
+      <button data-tab="explorer" class="nav-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100 flex items-center gap-2 whitespace-nowrap transition">
+        <i data-lucide="blocks" class="w-4 h-4"></i>
+        <span>Blockchain Explorer</span>
+      </button>
+      <button data-tab="analytics" class="nav-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100 flex items-center gap-2 whitespace-nowrap transition">
+        <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+        <span>National Turnout</span>
+      </button>
+      <button data-tab="constituencies" class="nav-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100 flex items-center gap-2 whitespace-nowrap transition">
+        <i data-lucide="map-pin" class="w-4 h-4"></i>
+        <span>Constituency Roster</span>
+      </button>
+      <button data-tab="assistant" class="nav-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100 flex items-center gap-2 whitespace-nowrap transition">
+        <i data-lucide="bot" class="w-4 h-4"></i>
+        <span>Matdaan Saathi AI</span>
+      </button>
+      <button data-tab="creator" class="nav-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold border border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100 flex items-center gap-2 whitespace-nowrap transition shadow-sm">
+        <i data-lucide="award" class="w-4 h-4 text-amber-600"></i>
+        <span>Palash Tripathi (Creator)</span>
+      </button>
+    </div>
+  </header>
+  <!-- Main Application Body -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-7">
+
+    <!-- ========================================================= -->
+    <!-- TAB 1: VOTER PORTAL (5-STEP BESPOKE REMOTE VOTING ENGINE) -->
+    <!-- ========================================================= -->
+    <section id="tab-vote" class="tab-content-panel space-y-6">
+      
+      <!-- Top Clean Wizard Stepper -->
+      <div class="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
+        <div class="flex items-center justify-between max-w-3xl mx-auto relative">
+          <div class="absolute left-6 right-6 top-4 h-0.5 bg-slate-200 -z-0"></div>
+
+          <!-- Step 1 Bubble -->
+          <div class="flex flex-col items-center gap-1.5 z-10">
+            <div class="step-bubble w-9 h-9 rounded-full bg-saffron-600 text-white font-bold flex items-center justify-center text-xs shadow-md shadow-saffron-500/30 ring-4 ring-saffron-100">1</div>
+            <span class="text-[11px] font-bold text-slate-800 text-center">Aadhaar / EPIC</span>
+          </div>
+
+          <!-- Step 2 Bubble -->
+          <div class="flex flex-col items-center gap-1.5 z-10">
+            <div class="step-bubble w-9 h-9 rounded-full bg-slate-100 text-slate-500 font-bold flex items-center justify-center text-xs border border-slate-200">2</div>
+            <span class="text-[11px] font-medium text-slate-500 text-center">AI Biometric</span>
+          </div>
+
+          <!-- Step 3 Bubble -->
+          <div class="flex flex-col items-center gap-1.5 z-10">
+            <div class="step-bubble w-9 h-9 rounded-full bg-slate-100 text-slate-500 font-bold flex items-center justify-center text-xs border border-slate-200">3</div>
+            <span class="text-[11px] font-medium text-slate-500 text-center">Dual Location</span>
+          </div>
+
+          <!-- Step 4 Bubble -->
+          <div class="flex flex-col items-center gap-1.5 z-10">
+            <div class="step-bubble w-9 h-9 rounded-full bg-slate-100 text-slate-500 font-bold flex items-center justify-center text-xs border border-slate-200">4</div>
+            <span class="text-[11px] font-medium text-slate-500 text-center">Digital EVM</span>
+          </div>
+
+          <!-- Step 5 Bubble -->
+          <div class="flex flex-col items-center gap-1.5 z-10">
+            <div class="step-bubble w-9 h-9 rounded-full bg-slate-100 text-slate-500 font-bold flex items-center justify-center text-xs border border-slate-200">5</div>
+            <span class="text-[11px] font-medium text-slate-500 text-center">VVPAT Slip</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 1: IDENTITY ONBOARDING & OTP -->
+      <div id="votingStep1" class="voting-step-pane civic-card-elevated p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-saffron-100 text-saffron-800 text-xs font-mono font-bold">STAGE 01</span>
+              <h2 class="text-xl font-bold text-slate-900">Citizen Identity & Aadhaar Verification</h2>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">Authenticate using your UIDAI Aadhaar number and Election Photo ID Card (EPIC) to retrieve your official home parliamentary registry.</p>
+          </div>
+
+          <!-- Quick Test Profile Selector -->
+          <div class="flex items-center gap-2.5 bg-slate-50 p-2 rounded-xl border border-slate-200">
+            <label class="text-xs text-slate-600 font-medium whitespace-nowrap">Demo Citizen Profile:</label>
+            <select id="sampleVoterSelect" class="bg-white border border-slate-300 text-xs text-slate-800 font-semibold rounded-lg px-3 py-1.5 outline-none focus:border-saffron-500 shadow-sm cursor-pointer">
+              <!-- Populated by JS -->
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Citizen ID Preview Card -->
+          <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col items-center text-center shadow-sm">
+            <img id="voterAvatarImg" src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&auto=format&fit=crop&q=80" alt="Voter" class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md mb-3">
+            <h3 id="voterProfileName" class="font-bold text-slate-900 text-lg">Rahul Sharma</h3>
+            <span class="text-xs text-indiaGreen-700 bg-indiaGreen-50 border border-indiaGreen-200 px-2.5 py-0.5 rounded-full font-medium mt-1 flex items-center gap-1">
+              <i data-lucide="check-circle-2" class="w-3.5 h-3.5 inline text-indiaGreen-600"></i> Verified ECI Registered Citizen
+            </span>
+
+            <div class="w-full mt-5 pt-4 border-t border-slate-200 text-left space-y-2.5 text-xs">
+              <div class="flex justify-between">
+                <span class="text-slate-500 font-medium">Current Location:</span>
+                <span id="voterCurrentLocSummary" class="text-slate-800 font-semibold">Bengaluru, Karnataka</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500 font-medium">Home Constituency:</span>
+                <span id="voterHomeLocSummary" class="text-saffron-700 font-bold">Varanasi (UP PC-64)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Input Fields & OTP Form -->
+          <div class="md:col-span-2 space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Aadhaar Number (UIDAI)</label>
+                <div class="relative">
+                  <input id="voterAadhaarInput" type="text" value="4589 1234 8976" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-mono font-medium text-slate-900 focus:border-saffron-500 focus:ring-2 focus:ring-saffron-100 outline-none shadow-sm">
+                  <i data-lucide="fingerprint" class="w-4 h-4 text-slate-400 absolute right-3.5 top-3"></i>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Voter ID (EPIC Number)</label>
+                <div class="relative">
+                  <input id="voterEpicInput" type="text" value="UP/64/098124" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-mono font-medium text-slate-900 focus:border-saffron-500 focus:ring-2 focus:ring-saffron-100 outline-none shadow-sm">
+                  <i data-lucide="credit-card" class="w-4 h-4 text-slate-400 absolute right-3.5 top-3"></i>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">Linked Mobile Number (For OTP Challenge)</label>
+              <div class="flex gap-2">
+                <input id="voterPhoneInput" type="text" value="+91 98765 43210" class="flex-1 bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-mono font-medium text-slate-900 focus:border-saffron-500 focus:ring-2 focus:ring-saffron-100 outline-none shadow-sm">
+                <button id="sendOtpBtn" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                  <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                  <span>Send OTP</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- OTP Sent Notification Box -->
+            <div id="otpSentBanner" class="hidden"></div>
+
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div class="w-full sm:w-auto flex items-center gap-2.5">
+                <label class="text-xs text-slate-700 font-bold whitespace-nowrap">Enter 6-Digit OTP:</label>
+                <input id="voterOtpInput" type="text" maxlength="6" placeholder="782914" class="bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-center text-sm font-mono tracking-widest text-saffron-600 font-bold w-32 focus:border-saffron-500 focus:ring-2 focus:ring-saffron-100 outline-none shadow-sm">
+              </div>
+
+              <button id="verifyOtpBtn" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-saffron-600 to-amber-600 hover:from-saffron-500 hover:to-amber-500 text-white text-xs font-bold rounded-xl shadow-md shadow-saffron-500/20 flex items-center justify-center gap-2 transition">
+                <span>Verify & Proceed to AI Biometrics</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: AI BIOMETRIC LIVENESS & ANTI-SPOOFING -->
+      <div id="votingStep2" class="voting-step-pane hidden civic-card-elevated p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-saffron-100 text-saffron-800 text-xs font-mono font-bold">STAGE 02</span>
+              <h2 class="text-xl font-bold text-slate-900">AI Biometric & Liveness Verification</h2>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">Computer vision facial landmark triangulation with dynamic anti-deepfake and 3D angle verification.</p>
+          </div>
+          <span id="aiScoreBadge" class="px-3.5 py-1 bg-blue-50 border border-blue-200 text-blue-800 text-xs font-mono rounded-full font-bold self-start md:self-auto">
+            Ready to Scan
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          
+          <!-- Camera Feed / Biometric Canvas Viewport -->
+          <div class="lg:col-span-7 flex flex-col items-center justify-center">
+            <div class="relative w-full max-w-[480px] aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 border-4 border-slate-200 shadow-xl">
+              <video id="biometricVideo" playsinline autoplay muted class="w-full h-full object-cover hidden"></video>
+              <canvas id="biometricCanvas" width="480" height="360" class="w-full h-full object-cover"></canvas>
+            </div>
+          </div>
+
+          <!-- Interactive Guidance Card -->
+          <div class="lg:col-span-5 space-y-4">
+            <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200 space-y-4">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-mono font-bold text-slate-500">CHALLENGE SEQUENCE</span>
+                <span class="text-xs text-indiaGreen-700 bg-indiaGreen-50 px-2 py-0.5 rounded-full font-medium border border-indiaGreen-200 flex items-center gap-1">
+                  <i data-lucide="shield-check" class="w-3.5 h-3.5 inline"></i> Neural Engine v4
+                </span>
+              </div>
+
+              <div>
+                <h3 id="aiChallengeTitle" class="text-lg font-bold text-slate-900 mb-1">Position Face in Oval</h3>
+                <p id="aiChallengeDesc" class="text-xs text-slate-600">Center your face within the biometric boundary.</p>
+              </div>
+
+              <!-- Progress Bar -->
+              <div class="space-y-1.5">
+                <div class="flex justify-between text-[11px] text-slate-500 font-mono">
+                  <span>Verification Depth</span>
+                  <span>AI Mesh Calibrated</span>
+                </div>
+                <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                  <div id="aiChallengeProgressBar" class="h-full bg-gradient-to-r from-saffron-500 to-indiaGreen-600 transition-all duration-300 w-1/5"></div>
+                </div>
+              </div>
+
+              <!-- AI Security Checklist -->
+              <div class="space-y-2 pt-3 border-t border-slate-200 text-xs">
+                <div class="flex items-center justify-between text-slate-700 font-medium">
+                  <span class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-indiaGreen-600"></i> Micro-muscular Blink Detection</span>
+                  <span class="text-[11px] text-indiaGreen-700 font-mono font-bold">ACTIVE</span>
+                </div>
+                <div class="flex items-center justify-between text-slate-700 font-medium">
+                  <span class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-indiaGreen-600"></i> 3D Head Yaw/Pitch Vector</span>
+                  <span class="text-[11px] text-indiaGreen-700 font-mono font-bold">ACTIVE</span>
+                </div>
+                <div class="flex items-center justify-between text-slate-700 font-medium">
+                  <span class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-indiaGreen-600"></i> Anti-Deepfake Spectral Analysis</span>
+                  <span class="text-[11px] text-indiaGreen-700 font-mono font-bold">ACTIVE</span>
+                </div>
+              </div>
+            </div>
+
+            <button id="startScanBtn" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl transition flex items-center justify-center gap-2 shadow-sm">
+              <i data-lucide="camera" class="w-4 h-4"></i>
+              <span>Re-trigger AI Biometric Scan</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: DUAL LOCATION CONFIRMATION & ZERO-KNOWLEDGE TOKEN -->
+      <div id="votingStep3" class="voting-step-pane hidden civic-card-elevated p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-saffron-100 text-saffron-800 text-xs font-mono font-bold">STAGE 03</span>
+              <h2 class="text-xl font-bold text-slate-900">Dual-Location Routing & Zero-Knowledge Decoupling</h2>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">Confirming your remote physical presence in India and auto-mapping to your official home constituency ballot.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Remote Current Location Card -->
+          <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200 relative overflow-hidden shadow-sm">
+            <div class="absolute top-0 right-0 px-3 py-1 bg-slate-900 text-white font-mono text-[10px] font-bold rounded-bl-xl">
+              CURRENT LOCATION
+            </div>
+            <div class="flex items-center gap-2 text-slate-600 text-xs font-bold uppercase tracking-wider mb-2">
+              <i data-lucide="map-pin" class="w-4 h-4 text-saffron-600"></i> Where You Are Right Now in India
+            </div>
+            <div id="step3CurrentLocation" class="text-xl font-bold text-slate-900 mb-2">Bengaluru, Karnataka (Pin: 560034)</div>
+            <div class="text-xs text-slate-600 space-y-1.5 pt-2 border-t border-slate-200">
+              <div><strong>Relocation Context:</strong> <span id="step3RelocationReason" class="text-slate-800">Software Engineer at Tech Park, Bengaluru</span></div>
+              <div><strong>Location Validation:</strong> <span class="text-indiaGreen-700 font-semibold font-mono">Territory of India (Geo-fencing Passed)</span></div>
+            </div>
+          </div>
+
+          <!-- Home Registered Constituency Card -->
+          <div class="p-6 bg-orange-50/60 rounded-2xl border border-orange-200 relative overflow-hidden shadow-sm">
+            <div class="absolute top-0 right-0 px-3 py-1 bg-saffron-600 text-white font-mono text-[10px] font-bold rounded-bl-xl">
+              REGISTERED HOME SEAT
+            </div>
+            <div class="flex items-center gap-2 text-saffron-800 text-xs font-bold uppercase tracking-wider mb-2">
+              <i data-lucide="home" class="w-4 h-4 text-saffron-600"></i> Official Parliamentary Constituency
+            </div>
+            <div id="step3HomeLocation" class="text-xl font-bold text-slate-900 mb-2">Varanasi (UP PC-64) - Uttar Pradesh</div>
+            <div class="text-xs text-slate-700 space-y-1.5 pt-2 border-t border-orange-200">
+              <div><strong>Constitutional Basis:</strong> <span class="text-slate-900 font-medium">Article 326 (Universal Adult Suffrage)</span></div>
+              <div><strong>Travel Burden Eliminated:</strong> <span id="step3TravelSaved" class="text-indiaGreen-700 font-bold">~32 hrs Train Travel & ₹4,000 Fare Saved</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zero-Knowledge Decoupling Explanation -->
+        <div class="p-6 bg-blue-50/70 rounded-2xl border border-blue-200 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-blue-900 font-bold text-sm">
+              <i data-lucide="key" class="w-4 h-4 text-blue-600"></i>
+              <span>Zero-Knowledge Blind Ballot Token Issued (Ballot Secrecy Protocol)</span>
+            </div>
+            <span class="px-2.5 py-0.5 bg-blue-100 text-blue-800 border border-blue-300 text-[10px] font-mono font-bold rounded-full">
+              ZKP-SHA256
+            </span>
+          </div>
+
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Your real Aadhaar & Voter ID have now been <strong>permanently unlinked</strong>. The system has generated an anonymous, single-use cryptographic Nullifier Hash. When your ballot is cast, no entity (not even the ECI or system admins) can link your candidate selection back to your personal identity.
+          </p>
+
+          <div class="p-3.5 bg-white rounded-xl border border-blue-200 font-mono text-xs text-blue-950 break-all shadow-sm">
+            <span class="text-slate-400">Anonymous Nullifier Hash:</span> <span id="step3ZkNullifierHash" class="font-bold text-slate-900">0xNUL_loading...</span>
+          </div>
+        </div>
+
+        <button id="confirmLocationBtn" class="w-full py-4 bg-gradient-to-r from-saffron-600 via-saffron-500 to-amber-600 hover:from-saffron-500 hover:to-amber-500 text-white font-bold text-sm rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-saffron-600/25">
+          <span>Authorize & Load Digital EVM Ballot Unit</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- STEP 4: DIGITAL EVM BALLOT UNIT -->
+      <div id="votingStep4" class="voting-step-pane hidden civic-card-elevated p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-saffron-100 text-saffron-800 text-xs font-mono font-bold">STAGE 04</span>
+              <h2 class="text-xl font-bold text-slate-900">Digital Electronic Voting Machine (EVM)</h2>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">Press the blue button next to your chosen candidate. Your ballot will be cryptographically signed and broadcasted to the blockchain.</p>
+          </div>
+        </div>
+
+        <!-- EVM Unit Console -->
+        <div class="evm-console p-5 sm:p-7 max-w-4xl mx-auto space-y-4">
+          <!-- EVM Machine Top Header -->
+          <div id="evmConstituencyHeader" class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+            <!-- Dynamically populated by JS -->
+          </div>
+
+          <!-- Candidates EVM Roster Rows -->
+          <div id="evmCandidateRows" class="space-y-2.5">
+            <!-- Dynamically rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5: BLOCKCHAIN CONFIRMATION & DIGITAL VVPAT SLIP -->
+      <div id="votingStep5" class="voting-step-pane hidden civic-card-elevated p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full bg-indiaGreen-100 text-indiaGreen-800 text-xs font-mono font-bold">STAGE 05</span>
+              <h2 class="text-xl font-bold text-slate-900">Vote Mined on Blockchain & VVPAT Generated</h2>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">Your vote has been sealed into an immutable block. Download your verifiable Digital VVPAT Slip.</p>
+          </div>
+          <span class="px-3.5 py-1 bg-indiaGreen-50 border border-indiaGreen-200 text-indiaGreen-800 text-xs font-mono rounded-full font-bold">
+            Status: IMMUTABLY SEALED
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          <!-- VVPAT Glass Box Window & Physical Thermal Paper Slip -->
+          <div class="lg:col-span-6 flex flex-col items-center">
+            <div class="w-full max-w-md bg-slate-900 border-4 border-slate-800 rounded-3xl p-5 shadow-2xl text-white">
+              <div class="text-center pb-3 border-b border-slate-800">
+                <div class="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest">
+                  VOTER VERIFIABLE PAPER AUDIT TRAIL (VVPAT)
+                </div>
+                <div class="text-[10px] text-slate-400">Election Commission of India • Remote Voting Terminal</div>
+              </div>
+
+              <!-- Thermal Paper Slip -->
+              <div class="mt-4 p-3 bg-slate-950/80 rounded-2xl border border-slate-800 flex justify-center">
+                <div id="vvpatSlipContainer" class="vvpat-paper-slip w-full max-w-sm p-5 rounded-xl space-y-3">
+                  <div class="text-center border-b border-slate-200 pb-2">
+                    <div class="font-extrabold text-xs tracking-wider text-slate-900">ELECTION COMMISSION OF INDIA</div>
+                    <div class="text-[10px] text-slate-500 font-medium">Rashtriya Matdaan Network (Remote Ballot Receipt)</div>
+                  </div>
+
+                  <div class="space-y-1.5 text-xs">
+                    <div class="flex justify-between">
+                      <span class="text-slate-500">Constituency:</span>
+                      <span id="vvpatConstName" class="font-bold text-slate-900 text-right">Varanasi (UP PC-64)</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-slate-500">Candidate Voted:</span>
+                      <span id="vvpatCandName" class="font-extrabold text-saffron-700 text-right text-sm">Narendra Modi</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-slate-500">Party Name:</span>
+                      <span id="vvpatPartyName" class="font-bold text-slate-800 text-right">BJP</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-slate-500">Timestamp:</span>
+                      <span id="vvpatTimestamp" class="font-mono text-[11px] text-slate-700">31/08/2026 06:45 IST</span>
+                    </div>
+                  </div>
+
+                  <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200 space-y-1 text-[10px] font-mono">
+                    <div class="truncate text-slate-600">Block: <span id="vvpatBlockNum" class="font-bold text-slate-900">#2</span></div>
+                    <div class="truncate text-slate-600">Merkle Root: <span id="vvpatMerkleRoot" class="font-bold text-slate-900">0x7a89...</span></div>
+                    <div class="truncate text-slate-600">Nullifier: <span id="vvpatNullifier" class="font-bold text-slate-900">0xNUL_4589...</span></div>
+                    <div class="truncate text-slate-600">Tx Hash: <span id="vvpatTxHash" class="font-bold text-indiaGreen-700">0xa9b8c7...</span></div>
+                  </div>
+
+                  <!-- QR Matrix -->
+                  <div class="flex flex-col items-center pt-1">
+                    <div id="vvpatQrSvg" class="flex justify-center"></div>
+                    <span class="text-[9px] text-slate-400 mt-1 font-mono text-center">Scan with ECI Auditor App to verify Merkle Proof</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Blockchain Proof Details & Action Buttons -->
+          <div class="lg:col-span-6 space-y-4">
+            <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+              <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="lock" class="w-4 h-4 text-indiaGreen-600"></i>
+                <span>Cryptographic Proof Guarantees</span>
+              </h3>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Your remote ballot has been validated by distributed ECI Validator Nodes across the national ledger. The vote is permanently sealed in the current block Merkle Tree.
+              </p>
+
+              <div class="grid grid-cols-2 gap-3 pt-2">
+                <div class="p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
+                  <div class="text-[10px] text-slate-500 font-mono font-semibold uppercase">Voter Privacy</div>
+                  <div class="text-xs font-bold text-indiaGreen-700 font-mono mt-0.5">100% Decoupled (ZKP)</div>
+                </div>
+                <div class="p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
+                  <div class="text-[10px] text-slate-500 font-mono font-semibold uppercase">Double Vote Guard</div>
+                  <div class="text-xs font-bold text-blue-700 font-mono mt-0.5">Nullifier Locked</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+              <button id="printVvpatBtn" class="flex-1 py-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm">
+                <i data-lucide="printer" class="w-4 h-4"></i>
+                <span>Print / Save VVPAT Slip</span>
+              </button>
+
+              <button id="voteAnotherBtn" class="flex-1 py-3.5 bg-white hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 border border-slate-300 shadow-sm">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                <span>Test Another Voter Profile</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 2: BLOCKCHAIN EXPLORER & TAMPER DEMO       -->
+    <!-- ============================================== -->
+    <section id="tab-explorer" class="tab-content-panel hidden space-y-6">
+      
+      <!-- Top Metrics Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="civic-card p-5">
+          <div class="text-xs text-slate-500 font-medium">TOTAL BLOCKS MINED</div>
+          <div id="statsTotalBlocks" class="text-3xl font-extrabold text-slate-900 font-mono mt-1">2</div>
+        </div>
+        <div class="civic-card p-5">
+          <div class="text-xs text-slate-500 font-medium">VOTES TRANSACTED</div>
+          <div id="statsTotalTxs" class="text-3xl font-extrabold text-saffron-600 font-mono mt-1">6</div>
+        </div>
+        <div class="civic-card p-5">
+          <div class="text-xs text-slate-500 font-medium">CONSENSUS ALGORITHM</div>
+          <div class="text-lg font-bold text-indiaGreen-700 font-mono mt-1">Proof-of-Authority (PoA)</div>
+        </div>
+        <div class="civic-card p-5">
+          <div class="text-xs text-slate-500 font-medium">CRYPTOGRAPHIC LEDGER</div>
+          <div class="text-lg font-bold text-blue-700 font-mono mt-1">SHA-256 Merkle Tree</div>
+        </div>
+      </div>
+
+      <!-- Live Validity Status Banner -->
+      <div id="blockchainValidityBanner">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Tamper Demonstration Card -->
+      <div class="civic-card p-6 border-l-4 border-l-amber-500 space-y-3 bg-amber-50/40">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="shield-alert" class="w-5 h-5 text-amber-600"></i>
+              <span>Interactive Blockchain Immutability Demonstration</span>
+            </h3>
+            <p class="text-xs text-slate-600 mt-1 max-w-3xl">
+              Experience the core security principle of Blockchain. Click "Simulate Malicious Tampering" to modify a candidate's vote in an existing block, and watch the entire cryptographic chain break in real-time.
+            </p>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <button id="tamperBlockBtn" class="px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap shadow-sm">
+              <i data-lucide="scissors" class="w-3.5 h-3.5"></i>
+              <span>Simulate Tampering</span>
+            </button>
+            <button id="repairChainBtn" class="px-4 py-2.5 bg-indiaGreen-600 hover:bg-indiaGreen-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap shadow-sm">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              <span>Repair & Re-Mine</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Blockchain Blocks Stream -->
+      <div>
+        <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <i data-lucide="layers" class="w-5 h-5 text-saffron-600"></i>
+          <span>Live National Distributed Ledger (Blocks Stream)</span>
+        </h3>
+        <div id="blockchainBlocksList" class="space-y-4">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 3: NATIONAL TURNOUT & ANALYTICS            -->
+    <!-- ============================================== -->
+    <section id="tab-analytics" class="tab-content-panel hidden space-y-6">
+      <div class="civic-card-elevated p-6 sm:p-8">
+        <h2 class="text-2xl font-bold text-slate-900 mb-1">National Remote Voter Turnout Dashboard</h2>
+        <p class="text-xs text-slate-500 mb-6">Real-time telemetry of domestic migrant voters participating across all 28 Indian States & 8 Union Territories.</p>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200">
+            <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+              <i data-lucide="bar-chart-2" class="w-4 h-4 text-saffron-600"></i>
+              <span>State-wise Voter Turnout (%)</span>
+            </h3>
+            <div class="h-64 relative">
+              <canvas id="chartStateTurnout"></canvas>
+            </div>
+          </div>
+
+          <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200">
+            <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+              <i data-lucide="pie-chart" class="w-4 h-4 text-indiaGreen-600"></i>
+              <span>Voter Participation Distribution</span>
+            </h3>
+            <div class="h-64 relative">
+              <canvas id="chartRemoteBreakdown"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+          <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 text-center">
+            <div class="text-3xl font-extrabold text-indiaGreen-700 font-mono">450+ Million</div>
+            <div class="text-xs text-slate-800 font-bold mt-1">Domestic Migrants Enfranchised</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">Zero need to travel back to home state</div>
+          </div>
+          <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 text-center">
+            <div class="text-3xl font-extrabold text-saffron-600 font-mono">₹18,500+ Cr</div>
+            <div class="text-xs text-slate-800 font-bold mt-1">Travel Expenses & Lost Wages Saved</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">Train, bus & flight fares preserved for citizens</div>
+          </div>
+          <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200 text-center">
+            <div class="text-3xl font-extrabold text-blue-700 font-mono">3.2M Tons CO₂</div>
+            <div class="text-xs text-slate-800 font-bold mt-1">Carbon Emissions Avoided</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">Greener democracy via digital remote voting</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 4: CONSTITUENCY ROSTER                     -->
+    <!-- ============================================== -->
+    <section id="tab-constituencies" class="tab-content-panel hidden space-y-6">
+      <div class="civic-card-elevated p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-2 mb-6">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900">Indian Parliamentary & Assembly Roster</h2>
+            <p class="text-xs text-slate-500 mt-1">Verified contesting candidates, party symbols, and educational qualifications for home constituencies.</p>
+          </div>
+          <span class="text-xs px-3.5 py-1.5 bg-blue-50 text-blue-800 border border-blue-200 rounded-full font-mono font-bold self-start">
+            543 Lok Sabha Seats Supported
+          </span>
+        </div>
+
+        <div id="constituenciesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================== -->
+    <!-- TAB 5: MATDAAN SAATHI AI ASSISTANT             -->
+    <!-- ============================================== -->
+    <section id="tab-assistant" class="tab-content-panel hidden space-y-6">
+      <div class="civic-card-elevated p-6 sm:p-8 max-w-4xl mx-auto">
+        <div class="flex items-center gap-3.5 pb-4 border-b border-slate-100 mb-5">
+          <div class="w-11 h-11 rounded-2xl bg-indiaGreen-50 border border-indiaGreen-200 flex items-center justify-center text-indiaGreen-700">
+            <i data-lucide="bot" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Matdaan Saathi (मतदान साथी) - AI Election Guide</h2>
+            <p class="text-xs text-slate-500">Ask any question about remote voting rights, blockchain verification, biometric security, or creator details.</p>
+          </div>
+        </div>
+
+        <!-- Question Chips -->
+        <div class="flex flex-wrap gap-2 mb-4">
+          <button class="ai-question-chip text-[11px] px-3.5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium border border-slate-200 transition"
+                  data-question="How does remote voting work across India?">
+            🗳️ How does remote voting work?
+          </button>
+          <button class="ai-question-chip text-[11px] px-3.5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium border border-slate-200 transition"
+                  data-question="Is my vote anonymous on the blockchain?">
+            🔒 Is my vote 100% anonymous?
+          </button>
+          <button class="ai-question-chip text-[11px] px-3.5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium border border-slate-200 transition"
+                  data-question="How does double voting get prevented?">
+            🛡️ How is double voting prevented?
+          </button>
+          <button class="ai-question-chip text-[11px] px-3.5 py-2 rounded-full bg-amber-50 hover:bg-amber-100 text-amber-900 font-semibold border border-amber-300 transition"
+                  data-question="Tell me about Palash Tripathi and his role as AI Product Engineer">
+            ⭐ Who is Palash Tripathi?
+          </button>
+        </div>
+
+        <!-- Chat Container -->
+        <div id="aiChatMessages" class="bg-slate-50 rounded-2xl border border-slate-200 p-5 h-80 overflow-y-auto space-y-4 mb-4">
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-full bg-indiaGreen-100 border border-indiaGreen-300 flex items-center justify-center text-indiaGreen-700 font-bold text-xs flex-shrink-0">
+              <i data-lucide="bot" class="w-4 h-4"></i>
+            </div>
+            <div class="bg-white border border-slate-200 text-slate-800 p-4 rounded-2xl rounded-tl-none text-xs max-w-lg shadow-sm space-y-2">
+              <div class="font-bold text-slate-900 flex items-center gap-2">
+                <span>Matdaan Saathi (मतदान साथी AI)</span>
+                <span class="px-2 py-0.5 bg-indiaGreen-50 border border-indiaGreen-200 text-indiaGreen-700 text-[10px] rounded-full font-bold">Online</span>
+              </div>
+              <div class="leading-relaxed">
+                Namaste! I am your AI Election Guide. I can assist you with understanding location-agnostic remote voting across India, Zero-Knowledge blockchain privacy, and details about the system architect <strong>Palash Tripathi</strong>.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Input Bar -->
+        <div class="flex gap-2">
+          <input id="assistantInput" type="text" placeholder="Type your election or technical question in English or Hindi..." class="flex-1 bg-white border border-slate-300 rounded-xl px-4 py-3 text-xs text-slate-900 placeholder-slate-400 focus:border-saffron-500 focus:ring-2 focus:ring-saffron-100 outline-none shadow-sm">
+          <button id="assistantSendBtn" class="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="send" class="w-4 h-4"></i>
+            <span>Ask</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 6: ABOUT PALASH TRIPATHI (AI PRODUCT ENGINEER) & EXCLUSIVE COPYRIGHT  -->
+    <!-- ========================================================================= -->
+    <section id="tab-creator" class="tab-content-panel hidden space-y-6">
+      
+      <!-- Creator Hero Banner Card -->
+      <div class="creator-badge-seal p-8 sm:p-10 rounded-3xl relative overflow-hidden">
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 pb-8 border-b border-amber-200/80">
+          <div class="space-y-3">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded-full text-xs font-mono font-bold">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-600"></i>
+              <span>ORIGINAL SYSTEM ARCHITECT & SOLE CREATOR</span>
+            </div>
+            
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+              Palash Tripathi
+            </h1>
+            <div class="text-base font-bold text-saffron-700">
+              AI Product Engineer & Decentralized Systems Architect
+            </div>
+            
+            <p class="text-sm text-slate-600 max-w-2xl leading-relaxed">
+              Pioneered the architectural framework for the <strong>Bharat Remote AI & Blockchain Voting System</strong> to enfranchise 450+ million migrant Indian citizens through secure, location-agnostic biometric verification and cryptographic Zero-Knowledge ballot casting.
+            </p>
+          </div>
+
+          <!-- Exclusive Copyright Badge Box -->
+          <div class="bg-white border-2 border-amber-300 p-6 rounded-2xl shadow-lg flex flex-col items-center text-center max-w-xs w-full">
+            <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3 border border-amber-200">
+              <i data-lucide="copyright" class="w-7 h-7"></i>
+            </div>
+            <div class="text-xs font-mono font-extrabold text-amber-900 uppercase tracking-widest">EXCLUSIVE COPYRIGHT</div>
+            <div class="text-xs font-bold text-slate-800 mt-1">Palash Tripathi</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">All Rights Strictly Reserved</div>
+            <div class="text-[10px] text-indiaGreen-700 bg-indiaGreen-50 px-2 py-0.5 rounded border border-indiaGreen-200 font-mono mt-2">IP Ref: PT-RMN-2026-AUTH</div>
+          </div>
+        </div>
+
+        <!-- About Palash Tripathi & Engineering Philosophy -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+          <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="user-check" class="w-5 h-5 text-saffron-600"></i>
+              <span>About Palash Tripathi (AI Product Engineer)</span>
+            </h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              As an <strong>AI Product Engineer</strong>, Palash Tripathi specializes in architecting high-impact, sovereign-scale digital solutions that bridge advanced Artificial Intelligence with decentralized cryptographic trust.
+            </p>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Recognizing that democratic participation in India is hindered by domestic migration, Palash engineered this system to eliminate physical travel barriers—enabling remote workers, migrant laborers, students, and defense forces to vote in their native parliamentary elections from anywhere across India.
+            </p>
+          </div>
+
+          <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="cpu" class="w-5 h-5 text-indiaGreen-600"></i>
+              <span>The Architectural Breakthrough</span>
+            </h3>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              To solve the dual challenges of <strong>voter accessibility</strong> and <strong>absolute election integrity</strong>, Palash designed a 3-pillar protocol:
+            </p>
+            <ul class="text-xs text-slate-600 space-y-1.5 list-disc list-inside">
+              <li><strong>AI Liveness Mesh</strong>: Anti-spoofing computer vision eliminating identity impersonation & deepfakes.</li>
+              <li><strong>Zero-Knowledge Decoupling</strong>: Anonymous Nullifier hashes protecting 100% ballot secrecy.</li>
+              <li><strong>Immutable Blockchain Ledger</strong>: SHA-256 Merkle proofs guaranteeing transparent public auditability.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Formal Intellectual Property Declaration -->
+        <div class="p-6 bg-slate-900 text-white rounded-2xl border border-slate-800 space-y-3 shadow-xl">
+          <div class="flex items-center gap-2 text-amber-400 font-bold text-sm">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+            <span>FORMAL INTELLECTUAL PROPERTY & COPYRIGHT DECLARATION</span>
+          </div>
+
+          <p class="text-xs text-slate-300 leading-relaxed font-mono">
+            "This project, its conceptual framework, user journey, dual-constituency mapping algorithm, AI biometric liveness protocol, zero-knowledge ballot decoupling architecture, and interactive simulation implementation are the exclusive original intellectual property created, designed, and engineered by <strong>Palash Tripathi</strong>. All rights, patents pending, visual assets, software architecture, and copyright are strictly reserved exclusively to <strong>Palash Tripathi</strong>."
+          </p>
+
+          <div class="flex flex-wrap items-center justify-between pt-3 border-t border-slate-800 text-[11px] text-slate-400 font-mono">
+            <span>© 2026 Palash Tripathi. All Rights Reserved.</span>
+            <span>Protocol: Bharat Remote Voting (RMN)</span>
+            <span class="text-amber-400 font-bold">Exclusive Ownership: Palash Tripathi Only</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Clean Light Footer -->
+  <footer class="mt-auto bg-white border-t border-slate-200 py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <div class="flex items-center gap-2">
+        <div class="w-2.5 h-2.5 rounded-full bg-indiaGreen-500"></div>
+        <span class="font-medium text-slate-700">Rashtriya Matdaan Network • Dedicated to 1.4 Billion Citizens of India</span>
+      </div>
+      <div class="font-mono text-slate-600">
+        Architected & Exclusively Copyrighted by <strong>Palash Tripathi</strong> (AI Product Engineer) © 2026
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="src/database.js"></script>
+  <script src="src/blockchain.js"></script>
+  <script src="src/ai-engine.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>
